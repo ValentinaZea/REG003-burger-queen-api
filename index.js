@@ -8,7 +8,18 @@ const pkg = require('./package.json');
 const { port, dbUrl, secret } = config;
 const app = express();
 
-// TODO: Conexión a la Base de Datos (MongoDB o MySQL)
+//--------- TODO: Conexión a la Base de Datos (MongoDB o MySQL)
+
+const pg = require("pg");
+const pgClient = new pg.Client({ connectionString: config.dbUrl });
+
+pgClient.connect();
+pgClient.query("SELECT NOW()", (err, res) => {
+  console.log(err, res);
+  pgClient.end();
+});
+
+// ----------------
 
 app.set('config', config);
 app.set('pkg', pkg);
