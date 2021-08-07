@@ -2,7 +2,9 @@ const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
-
+const { Pool } = require("pg");
+const config = require('../config');
+const pool = new Pool(config.db);
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
@@ -10,7 +12,7 @@ module.exports = (app, nextMain) => {
    * @description Lista productos
    * @path {GET} /products
    * @query {String} [page=1] Página del listado a consultar
-   * @query {String} [limit=10] Cantitad de elementos por página
+   * @query {String} [limit=10] Cantidad de elementos por página
    * @header {Object} link Parámetros de paginación
    * @header {String} link.first Link a la primera página
    * @header {String} link.prev Link a la página anterior
@@ -27,8 +29,16 @@ module.exports = (app, nextMain) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    */
-  app.get('/products', requireAuth, (req, resp, next) => {
-  });
+  const selectProducts = async (req, resp) =>{
+    const response = await pool.query(`SELECT product.id, product.name, product.price, product.image, product_type.title, product.dateentry
+    FROM product 
+    JOIN p_product_type ON product.id = p_product_type.product_id
+    JOIN product_type ON p_product_type.type_id = product_type.id`);
+    resp.json(response.rows) // agregar autenticacion 
+  }
+  // app.get('/products', selectProducts);
+  // app.get('/products', requireAuth, (req, resp, next) => {      
+  // });
 
   /**
    * @name GET /products/:productId
