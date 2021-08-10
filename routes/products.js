@@ -1,10 +1,17 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
+/* eslint-disable no-unused-expressions */
+const express = require('express');
 const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
-const { Pool } = require("pg");
-const config = require('../config');
-const pool = new Pool(config.db);
+
+const { selectProducts } = require('../controller/products');
+
+const router = express.Router();
+
+router.get('/products', selectProducts);
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
@@ -29,15 +36,8 @@ module.exports = (app, nextMain) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    */
-  const selectProducts = async (req, resp) =>{
-    const response = await pool.query(`SELECT product.id, product.name, product.price, product.image, product_type.title, product.dateentry
-    FROM product 
-    JOIN p_product_type ON product.id = p_product_type.product_id
-    JOIN product_type ON p_product_type.type_id = product_type.id`);
-    resp.json(response.rows) // agregar autenticacion 
-  }
-  // app.get('/products', selectProducts);
-  // app.get('/products', requireAuth, (req, resp, next) => {      
+
+  // app.get('/products', requireAuth, (req, resp, next) => {
   // });
 
   /**
@@ -84,7 +84,6 @@ module.exports = (app, nextMain) => {
    */
   app.post('/products', requireAdmin, (req, resp, next) => {
   });
-
 
   /**
    * @name PUT /products
@@ -135,3 +134,6 @@ module.exports = (app, nextMain) => {
 
   nextMain();
 };
+
+// module.exports = { router }
+module.exports = router;

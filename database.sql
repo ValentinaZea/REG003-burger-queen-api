@@ -27,5 +27,5 @@ UPDATE product SET dateentry = current_timestamp WHERE id=2;
 DELETE FROM product WHERE id=16;
 /* --------- COMANDS FOR LOGIN TO DB --------------
 docker ps -a --> Listar todos los servicios
-docker exec -it <id_container> bash
+docker exec -it 66523fbebcec bash
 psql -U <db_user>
